@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class CoreDataHandler : MonoBehaviour
 {
-    public static CoreDataHandler instance;
-
     private string _gameUID;
     private MapData _mapData;
 
@@ -13,14 +11,8 @@ public class CoreDataHandler : MonoBehaviour
     public string Scene => _mapData != null ? _mapData.sceneName : null;
     public float MapSize => _mapData.mapSize;
 
-    private void Awake()
-    {
-        if (instance == null)
-            instance = this;
-    }
-
     public void SetGameUID(MapData data)
-    {
+    { 
         _gameUID = $"{data.sceneName}__{System.Guid.NewGuid().ToString()}";
     }
     public void SetGameUID(string uid)

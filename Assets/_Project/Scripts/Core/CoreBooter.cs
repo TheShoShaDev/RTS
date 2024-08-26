@@ -1,20 +1,21 @@
+using Zenject;
 using System.Collections;
-using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CoreBooter : MonoBehaviour
 {
-    public static CoreBooter instance;
+    [Inject]
+    private CoreDataHandler _coreDataHandler;
 
-    public UnityEngine.UI.Image sceneTransitioner;
+    public Image SceneTransitioner { get; private set; }
 
     private bool _sceneIsLoaded;
 
-    private void Awake()
+    public CoreBooter(Image sceneTransitioner) 
     {
-        if (instance == null)
-            instance = this;
+        SceneTransitioner = sceneTransitioner;
     }
 
     private void OnEnable()
@@ -41,7 +42,7 @@ public class CoreBooter : MonoBehaviour
     public void LoadMap(string mapReference)
     {
         MapData data = Resources.Load<MapData>($"ScriptableObjects/Maps/{mapReference}");
-        CoreDataHandler.instance.SetMapData(data);
+        _coreDataHandler.SetMapData(data);
         string s = data.sceneName;
         StartCoroutine(_SwitchingScene("game", s));
     }
@@ -49,12 +50,12 @@ public class CoreBooter : MonoBehaviour
     private IEnumerator _SwitchingScene(string to, string map = "")
     {
         _sceneIsLoaded = false;
-        sceneTransitioner.color = Color.clear;
+        SceneTransitioner.color = Color.clear;
 
         float t = 0;
         while (t < 1f)
         {
-            sceneTransitioner.color = Color.Lerp(Color.clear, Color.black, t);
+            SceneTransitioner.color = Color.Lerp(Color.clear, Color.black, t);
             t += Time.deltaTime;
             yield return null;
         }
@@ -70,12 +71,12 @@ public class CoreBooter : MonoBehaviour
         t = 0;
         while (t < 1f)
         {
-            sceneTransitioner.color = Color.Lerp(Color.black, Color.clear, t);
+            SceneTransitioner.color = Color.Lerp(Color.black, Color.clear, t);
             t += Time.deltaTime;
             yield return null;
         }
 
-        sceneTransitioner.color = Color.clear;
+        SceneTransitioner.color = Color.clear;
     }
 
     private AsyncOperation _LoadMap(string map)
@@ -108,9 +109,9 @@ public class CoreBooter : MonoBehaviour
             Scene s = SceneManager.GetSceneByName("GameScene");
             if (s != null && s.IsValid())
                 SceneManager.UnloadSceneAsync(s);
-            if (CoreDataHandler.instance.Scene != null)
+            if (_coreDataHandler.Scene != null)
             {
-                s = SceneManager.GetSceneByName(CoreDataHandler.instance.Scene);
+                s = SceneManager.GetSceneByName(_coreDataHandler.Scene);
                 if (s != null && s.IsValid())
                     SceneManager.UnloadSceneAsync(s);
             }
