@@ -8,6 +8,9 @@ public class Initialization : MonoInstaller
 
     public override void InstallBindings()
     {
+        EventManager eventManager = new EventManager();
+        Container.Bind<EventManager>().AsSingle();
+
         CoreDataHandler coreDataHandler = new CoreDataHandler();
         Container.Bind<CoreDataHandler>().AsSingle();
 

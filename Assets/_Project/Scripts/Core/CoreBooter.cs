@@ -3,11 +3,15 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class CoreBooter : MonoBehaviour
 {
     [Inject]
     private CoreDataHandler _coreDataHandler;
+
+    [Inject]
+    private EventManager _eventBus;
 
     public Image SceneTransitioner { get; private set; }
 
@@ -20,12 +24,12 @@ public class CoreBooter : MonoBehaviour
 
     private void OnEnable()
     {
-        //EventManager.AddListener("LoadedScene", _OnLoadedScene);
+        _eventBus.AddListener<UnityAction>("LoadedScene", arg => _OnLoadedScene());
     }
 
     private void OnDisable()
     {
-        //EventManager.AddListener("LoadedScene", _OnLoadedScene);
+        _eventBus.AddListener<UnityAction>("LoadedScene", agr => _OnLoadedScene());
     }
 
     private void Start()
